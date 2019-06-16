@@ -5,9 +5,12 @@ Object detection image labeling tool, based on [image-labeler-react](https://git
 # Usage
 
 ```bash
+# client side dev server
 yarn
 yarn --cwd ./server
-yarn start
+yarn start 
+
+# on another bash
 yarn server
 ```
 

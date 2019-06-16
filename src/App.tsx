@@ -30,6 +30,7 @@ const App: React.FC = () => {
   const [imageUrl, setImageUrl] = useState('');
   const [imageNum, setImageNum] = useState(0);
   const [defaultType, setDefaultType] = useState('');
+  const [defaultBoxes, setDefaultBoxes] = useState([]);
   const [[width, height], setWidthHeight] = useState([600, 600]);
   const mainRef = useRef(null);
   const showNextImage = () => {
@@ -37,7 +38,9 @@ const App: React.FC = () => {
       let body = await res.json();
       let url = body.url;
       const _defaultType = body.defaultType;
+      const _defaultBoxes = body.defaultBoxes;
       setDefaultType(_defaultType);
+      setDefaultBoxes(_defaultBoxes);
       if (!url){
         setImageUrl('');
         return;
@@ -107,8 +110,9 @@ const App: React.FC = () => {
         }} 
         types={types} 
         defaultType={defaultType}
+        defaultBoxes={defaultBoxes}
         style={{
-          margin: '0 auto',
+          margin: '0px auto',
           borderRadius: 5
         }}/>
     </div>

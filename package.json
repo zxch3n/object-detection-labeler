@@ -8,7 +8,7 @@
     "@types/react": "16.8.20",
     "@types/react-dom": "16.8.4",
     "antd": "^3.19.3",
-    "image-labeler-react": "^1.0.0",
+    "image-labeler-react": "^1.0.6",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",

@@ -18,16 +18,26 @@ router.get('/', function(req, res, next) {
     let defaultType = "";
     while (index < items.length){
       urlPath = `/images/${items[index]}`;
+      if (urlPath.endsWith('.json')){
+        index++;
+        continue;
+      }
+
       if (fs.lstatSync('./public' + urlPath).isDirectory()) {
         defaultType = items[index];
-        const images = fs.readdirSync('./public' + urlPath);
+        const images = fs.readdirSync('./public' + urlPath)
+          .filter(name=>!name.endsWith('.json'));
         if (images.length === 0){
           // Empty dir
           index++;
           continue;
         }
 
-        const imageFilename = images[Math.floor(Math.random() * images.length)];
+        let imageFilename = null;
+        while (!imageFilename || imageFilename.endsWith('.json')){
+          imageFilename = images[Math.floor(Math.random() * images.length)];
+        }
+
         urlPath += '/' + imageFilename;
       }
 
@@ -39,10 +49,21 @@ router.get('/', function(req, res, next) {
       return;
     }
 
-    res.send(JSON.stringify({
-        url: urlPath,
-        defaultType: defaultType
-    }));
+    if (fs.existsSync('./public' + urlPath + '.json')) {
+      fs.readFile('./public' + urlPath + '.json', (err, data) => {
+        let defaultBoxes = JSON.parse(data).boxes;
+        res.send(JSON.stringify({
+            url: urlPath,
+            defaultType: defaultType,
+            defaultBoxes
+        }));
+      })
+    } else {
+      res.send(JSON.stringify({
+          url: urlPath,
+          defaultType: defaultType
+      }));
+    }
   })
 });
 
@@ -55,7 +76,9 @@ router.get('/image-num', (req, res, next) => {
     let n = 0;
     for (let i = 0; i < items.length; i++){
       if (fs.lstatSync('./public/images/' + items[i]).isDirectory()){
-        n += fs.readdirSync('./public/images/' + items[i]).length;
+        n += fs.readdirSync('./public/images/' + items[i]).filter(name=>{ 
+          return !name.endsWith('.json');
+        }).length;
       } else {
         n++;
       }
@@ -96,6 +119,11 @@ router.post('/', function(req, res, next) {
   const targetPath = path.join(config.targetDir, imageName);
   const labeledDataPath = path.join(config.targetDir, imageName + '.json');
   fs.rename(imagePath, targetPath, err=>{
+    fs.exists(imagePath + '.json', (exists) => {
+      if (exists){
+        fs.unlink(imagePath + '.json', err=>console.error(err));
+      }
+    })
     if (err){
       // FIXME: This image may be labeled
       console.error(err);
@@ -107,7 +135,7 @@ router.post('/', function(req, res, next) {
       return;
     }
 
-    fs.writeFile(labeledDataPath, req.body, err=>console.error(err));
+    fs.writeFile(labeledDataPath, JSON.stringify(req.body), err=>console.error(err));
     res.send(JSON.stringify({
       status: 200
     }))

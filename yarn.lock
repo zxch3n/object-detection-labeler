@@ -5711,10 +5711,10 @@ ignore@^4.0.6:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-4.0.6.tgz#750e3db5862087b4737ebac8207ffd1ef27b25fc"
   integrity sha512-cyFDKrqc/YdcWFniJhzI42+AzS+gNwmUzOSFcRCQYwySuBBBy/KjuxWLZ/FHEH6Moq1NizMOBWyTcv8O4OZIMg==
 
-image-labeler-react@^1.0.0:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/image-labeler-react/-/image-labeler-react-1.0.4.tgz#fef6096149d898271bdaae75e9d3dbedc1ff65ec"
-  integrity sha512-Et5Tf17AHgjL8YEPzGP3s1iILB8swow2XOSlJ1rjBLS60Vb7PLTvIeeZmblGz5+pz80zy7N/hXvA8h3YsBgk9Q==
+image-labeler-react@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/image-labeler-react/-/image-labeler-react-1.0.6.tgz#21bf98001d563ed552894f65afe62dae540b47fc"
+  integrity sha512-ZWUcp5ZOt6rShK/VLC43ZrKj10FtLPVkTinw5zAKKNSwxf6h4jra+EJevV8lmt5i0nFmVowgdgi1Lnj6y9BEiQ==
   dependencies:
     babel-plugin-import "^1.12.0"
     babel-preset-env "^1.7.0"
