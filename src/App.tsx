@@ -34,7 +34,7 @@ const App: React.FC = () => {
   const [[width, height], setWidthHeight] = useState([600, 600]);
   const mainRef = useRef(null);
   const showNextImage = () => {
-    fetch(serverUrl).then(async res=>{
+    return fetch(serverUrl).then(async res=>{
       let body = await res.json();
       let url = body.url;
       const _defaultType = body.defaultType;
@@ -51,7 +51,7 @@ const App: React.FC = () => {
     })
   }
   const getImageNum = () => {
-    fetch(serverUrl + 'image-num').then(async res=>{
+    return fetch(serverUrl + 'image-num').then(async res=>{
       let num = await res.text();
       setImageNum(parseInt(num));
     })
@@ -103,9 +103,8 @@ const App: React.FC = () => {
         imageUrl={imageUrl} 
         asyncUpload={async (labeledData)=>{
           postData(serverUrl, labeledData).then(res => {
-            console.log(res);
-            showNextImage();
             getImageNum();
+            showNextImage();
           });
         }} 
         types={types} 

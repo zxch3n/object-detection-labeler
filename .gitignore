@@ -3,6 +3,7 @@
 # dependencies
 **/node_modules
 /server/labeledData
+/server/public
 /.pnp
 .pnp.js
 

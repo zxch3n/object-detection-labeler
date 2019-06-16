@@ -3,29 +3,34 @@ var router = express.Router();
 var config = require('../config');
 var fs = require('fs');
 var path = require('path');
+var {promisify} = require('util');
+const lstat = promisify(fs.lstat);
+const readdir = promisify(fs.readdir);
+const exists = promisify(fs.exists);
 
 /**
  * Get next image
  */
 router.get('/', function(req, res, next) {
-  fs.readdir('./public/images/', (err, items) => {
+  fs.readdir(config.unlabeledImageDir, async (err, items) => {
     if (err) {
       throw err;
     }
 
     let index = 0;
-    let urlPath = `/images/${items[index]}`;
+    let urlPath = `/${config.unlabeledImageDirSuffix}/${items[index]}`;
     let defaultType = "";
     while (index < items.length){
-      urlPath = `/images/${items[index]}`;
+      urlPath = `/${config.unlabeledImageDirSuffix}/${items[index]}`;
       if (urlPath.endsWith('.json')){
         index++;
         continue;
       }
 
-      if (fs.lstatSync('./public' + urlPath).isDirectory()) {
+      const stat = await lstat(`./${config.staticDir}` + urlPath);
+      if (stat.isDirectory()) {
         defaultType = items[index];
-        const images = fs.readdirSync('./public' + urlPath)
+        const images = (await readdir(`./${config.staticDir}` + urlPath))
           .filter(name=>!name.endsWith('.json'));
         if (images.length === 0){
           // Empty dir
@@ -49,8 +54,8 @@ router.get('/', function(req, res, next) {
       return;
     }
 
-    if (fs.existsSync('./public' + urlPath + '.json')) {
-      fs.readFile('./public' + urlPath + '.json', (err, data) => {
+    if (await exists(`./${config.staticDir}` + urlPath + '.json')) {
+      fs.readFile(`./${config.staticDir}` + urlPath + '.json', (err, data) => {
         let defaultBoxes = JSON.parse(data).boxes;
         res.send(JSON.stringify({
             url: urlPath,
@@ -68,18 +73,21 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/image-num', (req, res, next) => {
-  fs.readdir('./public/images/', (err, items) => {
+  fs.readdir(config.unlabeledImageDir, async (err, items) => {
     if (err) {
       throw err;
     }
 
     let n = 0;
     for (let i = 0; i < items.length; i++){
-      if (fs.lstatSync('./public/images/' + items[i]).isDirectory()){
-        n += fs.readdirSync('./public/images/' + items[i]).filter(name=>{ 
+      const stat = await lstat(path.join(config.unlabeledImageDir, items[i]));
+      if (stat.isDirectory()){
+        const files = await fs.readdir(path.join(config.unlabeledImageDir, items[i]));
+        const filteredLength = files.filter(name=>{ 
           return !name.endsWith('.json');
         }).length;
-      } else {
+        n += filteredLength;
+      } else if (!items[i].endsWith('.json')) {
         n++;
       }
     }
@@ -91,7 +99,7 @@ router.get('/image-num', (req, res, next) => {
 /**
  * Post labeled data
  */
-router.post('/', function(req, res, next) {
+router.post('/', async function(req, res, next) {
   // req.body:
   // 
   // {
@@ -109,11 +117,12 @@ router.post('/', function(req, res, next) {
   //   ]
   // }
   let url = req.body.image;
+  url = decodeURI(url);
   const parts = url.split('/')
   const imageName = parts[parts.length - 1];
-  let imagePath = './public/images/' + imageName;
-  if (!fs.existsSync(imagePath)){
-    imagePath = './public/images/' + parts[parts.length - 2] + '/' + imageName;
+  let imagePath = path.join(config.unlabeledImageDir, imageName);
+  if (!await exists(imagePath)){
+    imagePath = path.join(config.unlabeledImageDir, parts[parts.length - 2], imageName);
   }
 
   const targetPath = path.join(config.targetDir, imageName);
