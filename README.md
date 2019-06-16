@@ -1,13 +1,16 @@
-# Image Labeler ( Bounding Box Annotation Tool )
+# Object Detection Image Labeler
 
-A react component that helps labeling images. Support scaling images by mouse wheel and pinch gesture.
-
-[![screenshot.png](https://i.postimg.cc/cJrdb8Sx/screenshot.png)](https://postimg.cc/t1G01JJw)
-
-[![labeler.gif](https://i.postimg.cc/L4rMYRxQ/labeler.gif)](https://postimg.cc/F1g6wt50)
+Object detection image labeling tool, based on [image-labeler-react](https://github.com/rem2016/image-labeler-react)
 
 # Usage
 
 ```bash
-npm install image-labeler-react
+yarn
+yarn --cwd ./server
+yarn start
+yarn server
 ```
+
+Put your unlabeled image file under `/server/public/images` and start labeling.
+
+The annotation will be saved in `/server/labeledData`, you can change it in the `/server/config.js` file.
