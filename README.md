@@ -13,4 +13,4 @@ yarn server
 
 Put your unlabeled image file under `/server/public/images` and start labeling.
 
-The annotation will be saved in `/server/labeledData`, you can change it in the `/server/config.js` file.
+The annotation will be saved in `/server/labeledData`, you can change the output path in the `/server/config.js` file.
